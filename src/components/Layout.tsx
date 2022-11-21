@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { Navbar } from "flowbite-react";
+import SelectTheme from "src/components/SelectTheme";
 
 type LayoutProps = {
   children?: React.ReactNode;
@@ -15,12 +16,8 @@ const Layout = ({ children }: LayoutProps) => {
             My Web3 Space
           </a>
         </div>
-        <div className="flex-1">
-          <select data-choose-theme>
-            <option value="">Default</option>
-            <option value="dark">Dark</option>
-            <option value="light">Light</option>
-          </select>
+        <div className="flex-2">
+          <SelectTheme />
         </div>
         <div className="flex-none">
           <div className="dropdown dropdown-end">
