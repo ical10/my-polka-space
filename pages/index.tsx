@@ -1,7 +1,7 @@
 import { useEffect } from "react";
+import { themeChange } from "theme-change";
 import Head from "next/head";
 import Layout from "src/components/Layout";
-import { Button, Card } from "flowbite-react";
 import { useSubSocialApiHook } from "src/hooks/use-subsocial-api";
 
 export default function Home() {
@@ -9,6 +9,11 @@ export default function Home() {
     useSubSocialApiHook();
 
   const myAddress = "5DSg6JpKCjKVSEEKzVtoSkszpMu3NUfWEs7WiDcCxzhXksCV";
+
+  useEffect(() => {
+    themeChange(false);
+    // 👆 false parameter is required for react project
+  }, []);
 
   useEffect(() => {
     initApi();
@@ -49,19 +54,26 @@ export default function Home() {
           <div>Your space is empty!</div>
         ) : (
           posts.map((post) => (
-            <div key={post.id} className="max-w-md p-5">
-              <Card imgSrc={post.content?.link ? post.content?.link[0] : ""}>
-                <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                  {post.content?.title}
-                </h5>
-                <p className="font-normal text-gray-700 dark:text-gray-400">
-                  {post.content?.body}
-                </p>
-              </Card>
+            <div
+              key={post.id}
+              className="card card-compact w-96 bg-base-100 shadow-xl"
+            >
+              <figure>
+                <img src="https://placeimg.com/400/225/arch" alt="Shoes" />
+              </figure>
+              <div className="card-body">
+                <h2 className="card-title">{post.content?.title}</h2>
+                <p>{post.content?.body}</p>
+                <div className="card-actions justify-end">
+                  <button className="btn btn-primary">Upvote</button>
+                </div>
+              </div>
             </div>
           ))
         )}
-        <Button onClick={handleGetAllPosts}>Get Posts</Button>
+        <button className="btn btn-primary" onClick={handleGetAllPosts}>
+          Get Posts
+        </button>
       </Layout>
     </div>
   );
