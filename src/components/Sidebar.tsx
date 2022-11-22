@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 
 type SidebarProps = {
   children?: React.ReactNode;
@@ -12,10 +13,10 @@ const Sidebar = ({ children }: SidebarProps) => {
           <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
           <ul className="menu p-4 w-80 bg-base-100 text-base-content">
             <li>
-              <a>Customization</a>
+              <Link href="/">My Public Space</Link>
             </li>
             <li>
-              <a>Sidebar Item 2</a>
+              <Link href="/customize">Customization</Link>
             </li>
           </ul>
         </div>
