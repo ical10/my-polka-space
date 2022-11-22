@@ -18,3 +18,14 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.rti--container {
+  --tw-border-opacity: 1;
+  --rti-border: hsl(var(--in) / var(--tw-border-opacity)) !important;
+}
+
+.rti--container:focus-within {
+  box-shadow: none;
+  outline: 2px solid hsl(var(--in));
+  outline-offset: 2px;
+}

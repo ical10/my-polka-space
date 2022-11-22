@@ -2,6 +2,7 @@ import Head from "next/head";
 import Layout from "src/components/Layout";
 import { useEffect, useState } from "react";
 import { themeChange } from "theme-change";
+import type { SpaceData } from "@subsocial/api/types";
 import { useSubSocialApiHook } from "src/hooks/use-subsocial-api";
 import EditSpaceModal from "src/components/EditSpaceModal";
 
@@ -18,6 +19,7 @@ const Customize = () => {
   }, []);
 
   const [isOpen, setOpen] = useState(false);
+  const [editedSpaceId, setEditedSpaceId] = useState("0");
 
   return (
     <div>
@@ -61,7 +63,10 @@ const Customize = () => {
                   <div className="card-actions justify-center">
                     <button
                       className="btn btn-primary btn-block"
-                      onClick={() => setOpen(!isOpen)}
+                      onClick={() => {
+                        setEditedSpaceId(space.id);
+                        setOpen(!isOpen);
+                      }}
                     >
                       Edit
                     </button>
@@ -71,7 +76,17 @@ const Customize = () => {
             ))}
         </div>
 
-        <EditSpaceModal isOpen={isOpen} onClose={() => setOpen(false)} />
+        <EditSpaceModal
+          isOpen={isOpen}
+          onClose={() => setOpen(false)}
+          editedSpace={
+            (publicSpaces &&
+              publicSpaces.find(
+                (space: SpaceData) => space.id === editedSpaceId
+              )) ??
+            null
+          }
+        />
       </Layout>
     </div>
   );
