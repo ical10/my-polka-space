@@ -1,8 +1,18 @@
 import { useState, useEffect } from "react";
+import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 import { bnsToIds } from "@subsocial/utils";
 import type { SpaceData, PostData } from "@subsocial/api/types";
 import initializeApi from "src/lib/SubsocialApi";
+import { cryptoWaitReady } from "@polkadot/util-crypto";
 import type { SubsocialApi } from "@subsocial/api";
+
+type UpdatedSpaceContent = {
+  account: InjectedAccountWithMeta;
+  spaceId: string;
+  name: string;
+  about: string;
+  tags: string[];
+};
 
 export const useSubSocialApiHook = () => {
   const [subsocialApi, setSubsocialApi] = useState<SubsocialApi | null>(null);
@@ -102,6 +112,69 @@ export const useSubSocialApiHook = () => {
     }
   };
 
+  const updateSpace = async ({
+    account,
+    spaceId,
+    about,
+    name,
+    tags,
+  }: UpdatedSpaceContent) => {
+    try {
+      initApi();
+
+      await cryptoWaitReady();
+
+      const update = {
+        content: {
+          about,
+          name,
+          tags,
+        },
+      };
+      const { web3FromSource } = await import("@polkadot/extension-dapp");
+
+      const injector = await web3FromSource(account.meta.source);
+
+      if (subsocialApi) {
+        const substrateApi = await subsocialApi?.blockchain.api;
+
+        if (substrateApi) {
+          const tx = substrateApi?.tx.spaces.updateSpace(spaceId, update);
+
+          tx?.signAndSend(
+            account.address,
+            {
+              signer: injector.signer,
+            },
+            async (result) => {
+              const { status } = result;
+
+              if (!result || !status) {
+                return;
+              }
+
+              if (status.isFinalized || status.isInBlock) {
+                const blockHash = status.isFinalized
+                  ? status.asFinalized
+                  : status.asInBlock;
+
+                console.log(
+                  `✅ updateSpaceTx finalized. Block hash: ${blockHash.toString()}`
+                );
+              } else if (result.isError) {
+                console.log(JSON.stringify(result));
+              } else {
+                console.log(`⏱ Current tx status: ${status.type}`);
+              }
+            }
+          );
+        }
+      }
+    } catch (error) {
+      console.warn({ error });
+    }
+  };
+
   return {
     subsocialApi,
     loading,
@@ -110,5 +183,6 @@ export const useSubSocialApiHook = () => {
     getAllPosts,
     posts,
     getAllPostsBySpaceId,
+    updateSpace,
   };
 };

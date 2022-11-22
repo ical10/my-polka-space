@@ -1,12 +1,13 @@
 import { SubsocialApi, generateCrustAuthToken } from "@subsocial/api";
 
-import { waitReady } from "@polkadot/wasm-crypto";
+import { cryptoWaitReady } from "@polkadot/util-crypto";
 import getConfig from "next/config";
 
 const { publicRuntimeConfig } = getConfig();
 
 const initializeApi = async () => {
-  await waitReady();
+  const authHeader = generateCrustAuthToken(publicRuntimeConfig.mnemonic);
+  await cryptoWaitReady();
 
   const api = await SubsocialApi.create({
     substrateNodeUrl: "wss://rco-para.subsocial.network",
@@ -15,7 +16,7 @@ const initializeApi = async () => {
   });
 
   api.ipfs.setWriteHeaders({
-    authorization: "Basic " + publicRuntimeConfig.apiAuthHeader,
+    authorization: "Basic " + authHeader,
   });
 
   return api;

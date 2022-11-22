@@ -1,4 +1,4 @@
-import type { PostData } from "@subsocial/types";
+import type { PostData } from "@subsocial/api/types";
 
 type PostCardProps = {
   post: PostData;

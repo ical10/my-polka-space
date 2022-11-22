@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { TagsInput } from "react-tag-input-component";
 import type { SpaceData } from "@subsocial/api/types";
+import { useSubSocialApiHook } from "src/hooks/use-subsocial-api";
+import { useWalletStore } from "src/store";
 
 type EditSpaceModalProps = {
   isOpen: boolean;
@@ -16,8 +18,16 @@ const EditSpaceModal = ({
   useEffect(() => {
     if (editedSpace && editedSpace.content) {
       setSelectedTags([...editedSpace.content.tags]);
+      setUpdatedName(editedSpace.content.name);
+      setUpdatedAbout(editedSpace.content.about);
     }
   }, [editedSpace]);
+
+  const { updateSpace } = useSubSocialApiHook();
+
+  const { account } = useWalletStore((state) => ({
+    account: state.account,
+  }));
 
   const [selectedTags, setSelectedTags] = useState([""]);
   const [updatedName, setUpdatedName] = useState(editedSpace?.content?.name);
@@ -36,7 +46,14 @@ const EditSpaceModal = ({
   };
 
   const handleLog = () => {
-    console.log({ updatedName, updatedAbout, selectedTags });
+    console.log({ account, editedSpace, updatedName, updatedAbout });
+    updateSpace({
+      account: account!,
+      spaceId: editedSpace?.id!,
+      name: updatedName!,
+      about: updatedAbout!,
+      tags: selectedTags,
+    });
   };
 
   if (!editedSpace || (editedSpace && !editedSpace.content)) return null;

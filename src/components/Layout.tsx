@@ -1,6 +1,10 @@
 import React from "react";
-import Navbar from "src/components/Navbar";
+import dynamic from "next/dynamic";
 import Sidebar from "src/components/Sidebar";
+
+const Navbar = dynamic(() => import("src/components/Navbar"), {
+  ssr: false,
+});
 
 type LayoutProps = {
   children?: React.ReactNode;

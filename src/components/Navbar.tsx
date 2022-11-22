@@ -5,8 +5,14 @@ import Link from "next/link";
 import { web3Accounts, web3Enable } from "@polkadot/extension-dapp";
 import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 import { trimMiddleString } from "src/helpers/strings";
+import { useWalletStore } from "src/store";
 
 const Navbar = () => {
+  const { setAccount } = useWalletStore((state) => ({
+    account: state.account,
+    setAccount: state.setAccount,
+  }));
+
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[] | null>(
     null
   );
@@ -21,7 +27,7 @@ const Navbar = () => {
     const allAccounts = await web3Accounts();
     setAccounts(allAccounts);
     setSelectedAccount(allAccounts[0]);
-    //setAccount(allAccounts[0]);
+    setAccount(allAccounts[0]);
   };
 
   const handleConnect = () => {
@@ -55,7 +61,10 @@ const Navbar = () => {
                 <li key={account.address}>
                   <button
                     className="btn btn-ghost normal-case"
-                    onClick={() => setSelectedAccount(account)}
+                    onClick={() => {
+                      setSelectedAccount(account);
+                      setAccount(account);
+                    }}
                   >
                     {trimMiddleString(account.address)}
                   </button>
