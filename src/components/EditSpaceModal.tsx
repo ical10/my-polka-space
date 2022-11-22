@@ -20,9 +20,23 @@ const EditSpaceModal = ({
   }, [editedSpace]);
 
   const [selectedTags, setSelectedTags] = useState([""]);
+  const [updatedName, setUpdatedName] = useState(editedSpace?.content?.name);
+  const [updatedAbout, setUpdatedAbout] = useState(editedSpace?.content?.about);
 
   const handleClose = () => {
     onClose();
+  };
+
+  const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUpdatedName(event.target.value);
+  };
+
+  const handleChangeAbout = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setUpdatedAbout(event.target.value);
+  };
+
+  const handleLog = () => {
+    console.log({ updatedName, updatedAbout, selectedTags });
   };
 
   if (!editedSpace || (editedSpace && !editedSpace.content)) return null;
@@ -43,7 +57,8 @@ const EditSpaceModal = ({
           </label>
           <input
             type="text"
-            value={editedSpace.content?.name}
+            value={updatedName}
+            onChange={handleChangeName}
             placeholder="Type space name here"
             className="input input-info bg-white w-full max-w-lg"
           />
@@ -52,7 +67,8 @@ const EditSpaceModal = ({
             <span className="label-text">Description</span>
           </label>
           <textarea
-            value={editedSpace.content?.about}
+            value={updatedAbout}
+            onChange={handleChangeAbout}
             placeholder="Type space description here"
             className="textarea textarea-info bg-white w-full max-w-lg"
           />
@@ -68,7 +84,9 @@ const EditSpaceModal = ({
           />
         </div>
         <div className="modal-action">
-          <button className="btn btn-primary">Confirm</button>
+          <button className="btn btn-primary" onClick={handleLog}>
+            Confirm
+          </button>
         </div>
       </div>
     </div>
