@@ -1,4 +1,5 @@
 import SelectTheme from "src/components/SelectTheme";
+import Link from "next/link";
 
 const Navbar = () => {
   return (
@@ -23,10 +24,9 @@ const Navbar = () => {
             className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
           >
             <li>
-              <a className="justify-between">My Profile</a>
-            </li>
-            <li>
-              <a>Settings</a>
+              <Link href="/spaces" className="justify-between">
+                My Spaces
+              </Link>
             </li>
             <li>
               <a>Logout</a>
