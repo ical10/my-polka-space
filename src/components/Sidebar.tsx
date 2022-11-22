@@ -33,7 +33,7 @@ const Sidebar = ({ children }: SidebarProps) => {
             </li>
           </ul>
         </div>
-        <div className="ml-96">{children}</div>
+        <div>{children}</div>
       </main>
     </div>
   );
