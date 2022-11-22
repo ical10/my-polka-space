@@ -6,10 +6,8 @@ import Layout from "src/components/Layout";
 import { useSubSocialApiHook } from "src/hooks/use-subsocial-api";
 
 export default function Home() {
-  const { initApi, getAllPosts, getAllPostsBySpaceId, posts, spaces } =
+  const { initApi, getAllPosts, getAllPostsBySpaceId, posts, publicSpaces } =
     useSubSocialApiHook();
-
-  const myAddress = "5DSg6JpKCjKVSEEKzVtoSkszpMu3NUfWEs7WiDcCxzhXksCV";
 
   useEffect(() => {
     themeChange(false);
@@ -21,7 +19,7 @@ export default function Home() {
   }, []);
 
   const handleGetAllPosts = () => {
-    getAllPosts(myAddress);
+    getAllPosts();
   };
 
   const handleGetAllPostsBySpaceId = (
@@ -42,16 +40,16 @@ export default function Home() {
       <Layout>
         <div className="flex flex-col gap-8">
           <div className="font-bold text-lg">This is my public space</div>
-          {spaces &&
-            spaces.map((space) => (
-              <button
-                key={space.id}
-                value={space.id}
-                onClick={handleGetAllPostsBySpaceId}
-              >
-                {space.id}
-              </button>
-            ))}
+          <ul className="menu menu-horizontal bg-base-100 border border-primary rounded-box p-2">
+            {publicSpaces &&
+              publicSpaces.map((space) => (
+                <li key={space.id}>
+                  <button value={space.id} onClick={handleGetAllPostsBySpaceId}>
+                    {space.id}
+                  </button>
+                </li>
+              ))}
+          </ul>
           <div className="flex flex-col gap-10">
             {!posts || !posts.length ? (
               <div>Your space is empty!</div>

@@ -6,11 +6,13 @@ import type { SubsocialApi } from "@subsocial/api";
 
 export const useSubSocialApiHook = () => {
   const [subsocialApi, setSubsocialApi] = useState<SubsocialApi | null>(null);
-  const [spaces, setSpaces] = useState<SpaceData[] | null>(null);
+  const [publicSpaces, setPublicSpaces] = useState<SpaceData[] | null>(null);
+  const [profileSpace, setProfileSpace] = useState<SpaceData | null>(null);
   const [posts, setPosts] = useState<PostData[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingSpaces, setLoadingSpaces] = useState(false);
   const [loadingCreatePost, setLoadingCreatePost] = useState(false);
+  const myAddress = "5DSg6JpKCjKVSEEKzVtoSkszpMu3NUfWEs7WiDcCxzhXksCV";
 
   useEffect(() => {
     if (subsocialApi) {
@@ -29,8 +31,6 @@ export const useSubSocialApiHook = () => {
 
   const getAllPublicSpaces = async (): Promise<void> => {
     try {
-      const myAddress = "5DSg6JpKCjKVSEEKzVtoSkszpMu3NUfWEs7WiDcCxzhXksCV";
-
       // Fetching ids of all the spaces by owner.
       const spaceIds = await subsocialApi?.blockchain.spaceIdsByOwner(
         myAddress
@@ -38,26 +38,38 @@ export const useSubSocialApiHook = () => {
 
       //TODO: handle undefined error
       const spaces = await subsocialApi?.findPublicSpaces(bnsToIds(spaceIds!));
-      setSpaces(spaces!);
+      setPublicSpaces(spaces!);
     } catch (error) {
       console.warn({ error });
     }
   };
 
-  const getAllPosts = async (ownerAccountId: string): Promise<void> => {
+  const getProfileSpace = async (): Promise<void> => {
+    setLoading(true);
+
+    try {
+      const profileSpace = await subsocialApi?.base.findProfileSpace(myAddress);
+      console.log({ profileSpace });
+    } catch (error) {
+      console.warn({ error });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getAllPosts = async (): Promise<void> => {
     setLoading(true);
 
     try {
       // Fetching ids of all the spaces by owner.
       const spaceIds = await subsocialApi?.blockchain.spaceIdsByOwner(
-        ownerAccountId
+        myAddress
       );
 
       // Fetching space data from all ids.
       if (spaceIds) {
         const spaces = await subsocialApi?.findPublicSpaces(bnsToIds(spaceIds));
         if (spaces) {
-          setSpaces(spaces);
           const postIds = await subsocialApi?.blockchain.postIdsBySpaceId(
             spaceIds[0]
           );
@@ -94,7 +106,7 @@ export const useSubSocialApiHook = () => {
     subsocialApi,
     loading,
     initApi,
-    spaces,
+    publicSpaces,
     getAllPosts,
     posts,
     getAllPostsBySpaceId,
