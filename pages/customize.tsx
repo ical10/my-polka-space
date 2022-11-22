@@ -12,8 +12,8 @@ const Customize = () => {
   return (
     <div>
       <Head>
-        <title>My Web3 Space</title>
-        <meta name="description" content="My space in web3" />
+        <title>My Web3 Space - Customize</title>
+        <meta name="description" content="My space in web3 - Customize Menu" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
