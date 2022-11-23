@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@polkadot/extension-dapp": "^0.44.6",
+    "@polkadot/react-identicon": "^2.9.13",
     "@polkadot/util": "^10.1.13",
     "@polkadot/wasm-crypto": "^6.3.1",
     "@subsocial/api": "^0.7.2",

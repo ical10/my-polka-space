@@ -1,4 +1,4 @@
-import { useState } from "react";
+import Identicon from "@polkadot/react-identicon";
 import SelectTheme from "src/components/SelectTheme";
 import Link from "next/link";
 
@@ -33,38 +33,40 @@ const Navbar = ({ onOpenSelectAccount }: NavbarProps) => {
       <div className="flex-2">
         <SelectTheme />
       </div>
-      <div>
-        {account ? (
-          <button className="btn btn-outline btn-accent">
-            {trimMiddleString(account?.address)}
-          </button>
-        ) : (
+      <div className="flex-none">
+        {!account && (
           <button className="btn btn-outline" onClick={handleOpenSelectAccount}>
             Connect wallet
           </button>
         )}
-      </div>
-      <div className="flex-none">
-        <div className="dropdown dropdown-end">
-          <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
-            <div className="w-10 rounded-full">
-              <img src="https://placeimg.com/80/80/people" />
-            </div>
-          </label>
-          <ul
-            tabIndex={0}
-            className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
-          >
-            <li>
-              <Link href="/spaces" className="justify-between">
-                My Spaces
-              </Link>
-            </li>
-            <li>
-              <a>Logout</a>
-            </li>
-          </ul>
-        </div>
+        {account && (
+          <div className="dropdown dropdown-end">
+            <label
+              tabIndex={0}
+              className="btn btn-outline btn-accent flex gap-2"
+            >
+              <div>{trimMiddleString(account?.address)}</div>
+              <Identicon
+                value={account?.address}
+                size={32}
+                theme={"polkadot"}
+              />
+            </label>
+            <ul
+              tabIndex={0}
+              className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
+            >
+              <li>
+                <Link href="/spaces" className="justify-between">
+                  My Spaces
+                </Link>
+              </li>
+              <li>
+                <a>Logout</a>
+              </li>
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );
