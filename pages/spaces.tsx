@@ -6,18 +6,13 @@ import type { SpaceData } from "@subsocial/api/types";
 import { useSubSocialApiHook } from "src/hooks/use-subsocial-api";
 import EditSpaceModal from "src/components/EditSpaceModal";
 
-const Customize = () => {
+const Spaces = () => {
   useEffect(() => {
     themeChange(false);
     // 👆 false parameter is required for react project
   }, []);
 
-  const { initApi, publicSpaces, loadingSpaces, processMessage } =
-    useSubSocialApiHook();
-
-  useEffect(() => {
-    initApi();
-  }, []);
+  const { publicSpaces, loadingSpaces, processMessage } = useSubSocialApiHook();
 
   const [isOpen, setOpen] = useState(false);
   const [editedSpaceId, setEditedSpaceId] = useState("0");
@@ -35,7 +30,7 @@ const Customize = () => {
           <div className="text-xl font-semibold">
             Here is your public spaces
           </div>
-          {publicSpaces &&
+          {publicSpaces ? (
             publicSpaces.map((space) => (
               <div
                 key={space.id}
@@ -74,7 +69,12 @@ const Customize = () => {
                   </div>
                 </div>
               </div>
-            ))}
+            ))
+          ) : (
+            <button className="btn btn-secondary btn-outline">
+              Click here to add new space
+            </button>
+          )}
         </div>
 
         <EditSpaceModal
@@ -89,7 +89,7 @@ const Customize = () => {
           }
         />
 
-        {loadingSpaces ? (
+        {loadingSpaces || processMessage.length ? (
           <div className="toast toast-center">
             <div className="alert alert-info min-w-max">
               <div>
@@ -105,4 +105,4 @@ const Customize = () => {
   );
 };
 
-export default Customize;
+export default Spaces;
