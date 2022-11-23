@@ -6,7 +6,7 @@ import Layout from "src/components/Layout";
 import { useSubSocialApiHook } from "src/hooks/use-subsocial-api";
 
 export default function Home() {
-  const { initApi, getAllPosts, getAllPostsBySpaceId, posts, publicSpaces } =
+  const { initApi, getAllPostsBySpaceId, posts, publicSpaces } =
     useSubSocialApiHook();
 
   useEffect(() => {
@@ -17,10 +17,6 @@ export default function Home() {
   useEffect(() => {
     initApi();
   }, []);
-
-  const handleGetAllPosts = () => {
-    getAllPosts();
-  };
 
   const handleGetAllPostsBySpaceId = (
     event: React.MouseEvent<HTMLButtonElement>
@@ -61,9 +57,6 @@ export default function Home() {
                 posts.map((post) => <PostCard post={post} key={post.id} />)
               )}
             </div>
-            <button className="btn btn-primary" onClick={handleGetAllPosts}>
-              Get Posts
-            </button>
           </div>
         </div>
       </Layout>
