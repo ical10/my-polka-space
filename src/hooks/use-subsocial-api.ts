@@ -2,17 +2,12 @@ import { useState, useEffect } from "react";
 import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 import { bnsToIds } from "@subsocial/utils";
 import type { SpaceData, PostData } from "@subsocial/api/types";
-import {
-  IpfsContent,
-  OptionBool,
-  SpaceUpdate,
-} from "@subsocial/api/substrate/wrappers";
+import { IpfsContent, SpaceUpdate } from "@subsocial/api/substrate/wrappers";
 import initializeApi from "src/lib/SubsocialApi";
-//import { cryptoWaitReady } from "@polkadot/util-crypto";
 import type { SubsocialApi } from "@subsocial/api";
+import { useWalletStore } from "src/store";
 
 type UpdatedSpaceContent = {
-  account: InjectedAccountWithMeta;
   spaceId: string;
   name: string;
   about: string;
@@ -20,6 +15,10 @@ type UpdatedSpaceContent = {
 };
 
 export const useSubSocialApiHook = () => {
+  const { account } = useWalletStore((state) => ({
+    account: state.account,
+  }));
+
   const [subsocialApi, setSubsocialApi] = useState<SubsocialApi | null>(null);
   const [publicSpaces, setPublicSpaces] = useState<SpaceData[] | null>(null);
   const [profileSpace, setProfileSpace] = useState<SpaceData | null>(null);
@@ -32,10 +31,17 @@ export const useSubSocialApiHook = () => {
   const myAddress = "5DSg6JpKCjKVSEEKzVtoSkszpMu3NUfWEs7WiDcCxzhXksCV";
 
   useEffect(() => {
-    if (subsocialApi) {
-      getAllPublicSpaces();
+    if (account) {
+      getAllPublicSpaces(account);
     }
-  }, [subsocialApi]);
+
+    if (!account) {
+      setProcessMessage("Connect your wallet first!");
+      setTimeout(() => {
+        setProcessMessage("");
+      }, 3000);
+    }
+  }, [account]);
 
   const initApi = async (): Promise<void> => {
     try {
@@ -46,14 +52,24 @@ export const useSubSocialApiHook = () => {
     }
   };
 
-  const getAllPublicSpaces = async (): Promise<void> => {
+  const getAllPublicSpaces = async (account: InjectedAccountWithMeta) => {
     setLoadingSpaces(true);
-    setProcessMessage("Fetching public spaces");
 
     try {
-      // Fetching ids of all the spaces by owner.
+      if (!account) {
+        setProcessMessage("Connect your wallet first!");
+        setTimeout(() => {
+          setProcessMessage("");
+        }, 3000);
+        return;
+      }
+
+      setProcessMessage("Fetching public spaces");
+
+      const subsocialApi = await initializeApi();
+
       const spaceIds = await subsocialApi?.blockchain.spaceIdsByOwner(
-        myAddress
+        account.address
       );
 
       //TODO: handle undefined error
@@ -126,7 +142,6 @@ export const useSubSocialApiHook = () => {
   };
 
   const updateSpace = async ({
-    account,
     spaceId,
     about,
     name,
@@ -139,6 +154,8 @@ export const useSubSocialApiHook = () => {
       const subsocialApi = await initializeApi();
 
       const { web3FromSource } = await import("@polkadot/extension-dapp");
+
+      if (!account) throw new Error("Connect your wallet first");
 
       const injector = await web3FromSource(account.meta.source);
 
@@ -206,6 +223,7 @@ export const useSubSocialApiHook = () => {
     initApi,
     publicSpaces,
     loadingSpaces,
+    getAllPublicSpaces,
     getAllPosts,
     posts,
     getAllPostsBySpaceId,
