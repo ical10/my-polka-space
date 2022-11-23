@@ -36,7 +36,7 @@ export default function Home() {
       <Layout>
         <div className="ml-96">
           <div className="flex flex-col gap-8">
-            <div className="font-bold text-lg">This is my public space</div>
+            <div className="font-bold text-lg">Your public space</div>
             <ul className="menu menu-horizontal bg-base-100 border border-primary rounded-box p-2">
               {publicSpaces &&
                 publicSpaces.map((space) => (
@@ -45,7 +45,7 @@ export default function Home() {
                       value={space.id}
                       onClick={handleGetAllPostsBySpaceId}
                     >
-                      {space.id}
+                      {space.content?.name}
                     </button>
                   </li>
                 ))}
