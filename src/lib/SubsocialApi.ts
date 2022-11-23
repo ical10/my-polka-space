@@ -1,4 +1,4 @@
-import { SubsocialApi, generateCrustAuthToken } from "@subsocial/api";
+import { SubsocialApi } from "@subsocial/api";
 
 import { cryptoWaitReady } from "@polkadot/util-crypto";
 import getConfig from "next/config";
@@ -6,7 +6,6 @@ import getConfig from "next/config";
 const { publicRuntimeConfig } = getConfig();
 
 const initializeApi = async () => {
-  const authHeader = generateCrustAuthToken(publicRuntimeConfig.mnemonic);
   await cryptoWaitReady();
 
   const api = await SubsocialApi.create({
@@ -16,7 +15,7 @@ const initializeApi = async () => {
   });
 
   api.ipfs.setWriteHeaders({
-    authorization: "Basic " + authHeader,
+    authorization: "Basic " + publicRuntimeConfig.apiAuthHeader,
   });
 
   return api;
