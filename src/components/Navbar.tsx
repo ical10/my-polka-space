@@ -2,36 +2,25 @@ import { useState } from "react";
 import SelectTheme from "src/components/SelectTheme";
 import Link from "next/link";
 
-import { web3Accounts, web3Enable } from "@polkadot/extension-dapp";
-import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 import { trimMiddleString } from "src/helpers/strings";
 import { useWalletStore } from "src/store";
 
-const Navbar = () => {
-  const { setAccount } = useWalletStore((state) => ({
-    account: state.account,
-    setAccount: state.setAccount,
-  }));
+type NavbarProps = {
+  onOpenSelectAccount: () => void;
+};
 
-  const [accounts, setAccounts] = useState<InjectedAccountWithMeta[] | null>(
-    null
+const Navbar = ({ onOpenSelectAccount }: NavbarProps) => {
+  const { setAccount, setAccounts, account, accounts } = useWalletStore(
+    (state) => ({
+      account: state.account,
+      setAccount: state.setAccount,
+      accounts: state.accounts,
+      setAccounts: state.setAccounts,
+    })
   );
-  const [selectedAccount, setSelectedAccount] =
-    useState<InjectedAccountWithMeta | null>(null);
 
-  const getAccounts = async () => {
-    const extensions = await web3Enable("My Web3 Space Dapp");
-    if (extensions.length === 0) {
-      return;
-    }
-    const allAccounts = await web3Accounts();
-    setAccounts(allAccounts);
-    setSelectedAccount(allAccounts[0]);
-    setAccount(allAccounts[0]);
-  };
-
-  const handleConnect = () => {
-    getAccounts();
+  const handleOpenSelectAccount = () => {
+    onOpenSelectAccount();
   };
 
   return (
@@ -45,35 +34,12 @@ const Navbar = () => {
         <SelectTheme />
       </div>
       <div>
-        {accounts && accounts.length ? (
-          <div className="dropdown dropdown-bottom">
-            <label
-              tabIndex={0}
-              className="btn btn-outline btn-secondary m-1 normal-case"
-            >
-              {trimMiddleString(selectedAccount?.address)}
-            </label>
-            <ul
-              tabIndex={0}
-              className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
-            >
-              {accounts.map((account) => (
-                <li key={account.address}>
-                  <button
-                    className="btn btn-ghost normal-case"
-                    onClick={() => {
-                      setSelectedAccount(account);
-                      setAccount(account);
-                    }}
-                  >
-                    {trimMiddleString(account.address)}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
+        {account ? (
+          <button className="btn btn-outline btn-accent">
+            {trimMiddleString(account?.address)}
+          </button>
         ) : (
-          <button className="btn btn-outline" onClick={handleConnect}>
+          <button className="btn btn-outline" onClick={handleOpenSelectAccount}>
             Connect wallet
           </button>
         )}
