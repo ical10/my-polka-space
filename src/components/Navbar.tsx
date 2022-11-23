@@ -35,7 +35,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="navbar sticky top-0 z-50 bg-slate-100/20 backdrop-filter backdrop-blur-xl">
+    <div className="navbar sticky top-0 z-50 bg-slate-100/20 backdrop-filter backdrop-blur-xl gap-2">
       <div className="flex-1">
         <a className="btn btn-ghost text-primary normal-case text-xl drop-shadow-lg">
           My Web3 Space
