@@ -23,7 +23,7 @@ const EditSpaceModal = ({
     }
   }, [editedSpace]);
 
-  const { updateSpace } = useSubSocialApiHook();
+  const { updateSpace, loadingUpdateSpace } = useSubSocialApiHook();
 
   const { account } = useWalletStore((state) => ({
     account: state.account,
@@ -45,8 +45,7 @@ const EditSpaceModal = ({
     setUpdatedAbout(event.target.value);
   };
 
-  const handleLog = () => {
-    console.log({ account, editedSpace, updatedName, updatedAbout });
+  const handleUpdateSpace = () => {
     updateSpace({
       account: account!,
       spaceId: editedSpace?.id!,
@@ -101,9 +100,22 @@ const EditSpaceModal = ({
           />
         </div>
         <div className="modal-action">
-          <button className="btn btn-primary" onClick={handleLog}>
-            Confirm
-          </button>
+          {loadingUpdateSpace ? (
+            <button className="btn btn-disabled flex gap-2">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-tr from-accent to-info animate-spin">
+                <div className="h-4 w-4 rounded-full bg-base-100"></div>
+              </div>
+              <div>Updating</div>
+            </button>
+          ) : (
+            <button
+              className="btn btn-primary"
+              onClick={handleUpdateSpace}
+              disabled={loadingUpdateSpace}
+            >
+              Confirm
+            </button>
+          )}
         </div>
       </div>
     </div>

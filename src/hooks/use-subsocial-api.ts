@@ -2,8 +2,13 @@ import { useState, useEffect } from "react";
 import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 import { bnsToIds } from "@subsocial/utils";
 import type { SpaceData, PostData } from "@subsocial/api/types";
+import {
+  IpfsContent,
+  OptionBool,
+  SpaceUpdate,
+} from "@subsocial/api/substrate/wrappers";
 import initializeApi from "src/lib/SubsocialApi";
-import { cryptoWaitReady } from "@polkadot/util-crypto";
+//import { cryptoWaitReady } from "@polkadot/util-crypto";
 import type { SubsocialApi } from "@subsocial/api";
 
 type UpdatedSpaceContent = {
@@ -22,6 +27,8 @@ export const useSubSocialApiHook = () => {
   const [loading, setLoading] = useState(false);
   const [loadingSpaces, setLoadingSpaces] = useState(false);
   const [loadingCreatePost, setLoadingCreatePost] = useState(false);
+  const [loadingUpdateSpace, setLoadingUpdateSpace] = useState(false);
+  const [processMessage, setProcessMessage] = useState("Processing");
   const myAddress = "5DSg6JpKCjKVSEEKzVtoSkszpMu3NUfWEs7WiDcCxzhXksCV";
 
   useEffect(() => {
@@ -40,6 +47,9 @@ export const useSubSocialApiHook = () => {
   };
 
   const getAllPublicSpaces = async (): Promise<void> => {
+    setLoadingSpaces(true);
+    setProcessMessage("Fetching public spaces");
+
     try {
       // Fetching ids of all the spaces by owner.
       const spaceIds = await subsocialApi?.blockchain.spaceIdsByOwner(
@@ -51,6 +61,9 @@ export const useSubSocialApiHook = () => {
       setPublicSpaces(spaces!);
     } catch (error) {
       console.warn({ error });
+    } finally {
+      setLoadingSpaces(false);
+      setProcessMessage("");
     }
   };
 
@@ -119,37 +132,46 @@ export const useSubSocialApiHook = () => {
     name,
     tags,
   }: UpdatedSpaceContent) => {
+    setLoadingUpdateSpace(true);
+    setProcessMessage("Updating space");
+
     try {
-      initApi();
+      const subsocialApi = await initializeApi();
 
-      await cryptoWaitReady();
-
-      const update = {
-        content: {
-          about,
-          name,
-          tags,
-        },
-      };
       const { web3FromSource } = await import("@polkadot/extension-dapp");
 
       const injector = await web3FromSource(account.meta.source);
 
       if (subsocialApi) {
-        const substrateApi = await subsocialApi?.blockchain.api;
+        const cid = await subsocialApi.ipfs.saveContent({
+          about,
+          name,
+          tags,
+        });
+
+        //@ts-ignore
+        const update = new SpaceUpdate({
+          //@ts-ignore
+          content: IpfsContent(cid),
+          //@ts-ignore hidden: new OptionBool(false),
+        });
+
+        const substrateApi = await subsocialApi.blockchain.api;
 
         if (substrateApi) {
-          const tx = substrateApi?.tx.spaces.updateSpace(spaceId, update);
+          const tx = substrateApi.tx.spaces.updateSpace(spaceId, update);
 
-          tx?.signAndSend(
+          tx.signAndSend(
             account.address,
             {
               signer: injector.signer,
             },
             async (result) => {
               const { status } = result;
+              console.log({ status, result });
 
               if (!result || !status) {
+                setLoadingUpdateSpace(false);
                 return;
               }
 
@@ -161,8 +183,10 @@ export const useSubSocialApiHook = () => {
                 console.log(
                   `✅ updateSpaceTx finalized. Block hash: ${blockHash.toString()}`
                 );
+                setLoadingUpdateSpace(false);
               } else if (result.isError) {
                 console.log(JSON.stringify(result));
+                setLoadingUpdateSpace(false);
               } else {
                 console.log(`⏱ Current tx status: ${status.type}`);
               }
@@ -172,6 +196,7 @@ export const useSubSocialApiHook = () => {
       }
     } catch (error) {
       console.warn({ error });
+      setLoadingUpdateSpace(false);
     }
   };
 
@@ -180,9 +205,12 @@ export const useSubSocialApiHook = () => {
     loading,
     initApi,
     publicSpaces,
+    loadingSpaces,
     getAllPosts,
     posts,
     getAllPostsBySpaceId,
     updateSpace,
+    loadingUpdateSpace,
+    processMessage,
   };
 };

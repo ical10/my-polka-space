@@ -12,7 +12,8 @@ const Customize = () => {
     // 👆 false parameter is required for react project
   }, []);
 
-  const { initApi, publicSpaces } = useSubSocialApiHook();
+  const { initApi, publicSpaces, loadingSpaces, processMessage } =
+    useSubSocialApiHook();
 
   useEffect(() => {
     initApi();
@@ -87,6 +88,18 @@ const Customize = () => {
             null
           }
         />
+
+        {loadingSpaces ? (
+          <div className="toast toast-center">
+            <div className="alert alert-info min-w-max">
+              <div>
+                <span>{processMessage}</span>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <></>
+        )}
       </Layout>
     </div>
   );
