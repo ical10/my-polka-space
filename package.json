@@ -12,7 +12,7 @@
     "@polkadot/extension-dapp": "^0.44.6",
     "@polkadot/util": "^10.1.13",
     "@polkadot/wasm-crypto": "^6.3.1",
-    "@subsocial/api": "^0.7.8-dev.0",
+    "@subsocial/api": "^0.7.2",
     "@types/node": "18.11.9",
     "@types/react": "18.0.25",
     "@types/react-dom": "18.0.9",
