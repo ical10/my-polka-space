@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { TagsInput } from "react-tag-input-component";
 import type { SpaceData } from "@subsocial/api/types";
 import { useSubSocialApiHook } from "src/hooks/use-subsocial-api";
-import { useWalletStore } from "src/store";
 
 type EditSpaceModalProps = {
   isOpen: boolean;
@@ -24,10 +23,6 @@ const EditSpaceModal = ({
   }, [editedSpace]);
 
   const { updateSpace, loadingUpdateSpace } = useSubSocialApiHook();
-
-  const { account } = useWalletStore((state) => ({
-    account: state.account,
-  }));
 
   const [selectedTags, setSelectedTags] = useState([""]);
   const [updatedName, setUpdatedName] = useState(editedSpace?.content?.name);
