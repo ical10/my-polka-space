@@ -47,7 +47,6 @@ const EditSpaceModal = ({
 
   const handleUpdateSpace = () => {
     updateSpace({
-      account: account!,
       spaceId: editedSpace?.id!,
       name: updatedName!,
       about: updatedAbout!,
