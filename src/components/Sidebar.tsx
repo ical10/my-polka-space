@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Emoji from "src/components/Emoji";
+import ActiveLink from "src/components/ActiveLink";
 
 type SidebarProps = {
   children?: React.ReactNode;
@@ -14,22 +15,16 @@ const Sidebar = ({ children }: SidebarProps) => {
           <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
           <ul className="menu p-4 w-80 bg-base-100 text-base-content">
             <li>
-              <Link
-                href="/"
-                className="text-lg font-regular text-secondary focus:font-semibold"
-              >
+              <ActiveLink href="/">
                 <Emoji symbol="🌐" />
                 My Public Space
-              </Link>
+              </ActiveLink>
             </li>
             <li>
-              <Link
-                href="/customize"
-                className="text-lg font-regular text-secondary focus:font-semibold"
-              >
+              <ActiveLink href="/customize">
                 <Emoji symbol="🛠️" />
                 Customization
-              </Link>
+              </ActiveLink>
             </li>
           </ul>
         </div>
