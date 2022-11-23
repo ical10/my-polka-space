@@ -28,11 +28,10 @@ export const useSubSocialApiHook = () => {
   const [loadingCreatePost, setLoadingCreatePost] = useState(false);
   const [loadingUpdateSpace, setLoadingUpdateSpace] = useState(false);
   const [processMessage, setProcessMessage] = useState("Processing");
-  const myAddress = "5DSg6JpKCjKVSEEKzVtoSkszpMu3NUfWEs7WiDcCxzhXksCV";
 
   useEffect(() => {
     if (account) {
-      getAllPublicSpaces(account);
+      getAllPublicSpaces();
     }
 
     if (!account) {
@@ -52,7 +51,7 @@ export const useSubSocialApiHook = () => {
     }
   };
 
-  const getAllPublicSpaces = async (account: InjectedAccountWithMeta) => {
+  const getAllPublicSpaces = async () => {
     setLoadingSpaces(true);
 
     try {
@@ -87,7 +86,17 @@ export const useSubSocialApiHook = () => {
     setLoading(true);
 
     try {
-      const profileSpace = await subsocialApi?.base.findProfileSpace(myAddress);
+      if (!account) {
+        setProcessMessage("Connect your wallet first!");
+        setTimeout(() => {
+          setProcessMessage("");
+        }, 3000);
+        return;
+      }
+
+      const profileSpace = await subsocialApi?.base.findProfileSpace(
+        account.address
+      );
       console.log({ profileSpace });
     } catch (error) {
       console.warn({ error });
@@ -100,9 +109,16 @@ export const useSubSocialApiHook = () => {
     setLoading(true);
 
     try {
-      // Fetching ids of all the spaces by owner.
+      if (!account) {
+        setProcessMessage("Connect your wallet first!");
+        setTimeout(() => {
+          setProcessMessage("");
+        }, 3000);
+        return;
+      }
+
       const spaceIds = await subsocialApi?.blockchain.spaceIdsByOwner(
-        myAddress
+        account.address
       );
 
       // Fetching space data from all ids.
