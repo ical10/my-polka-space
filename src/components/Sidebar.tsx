@@ -10,7 +10,7 @@ type SidebarProps = {
 const Sidebar = ({ children }: SidebarProps) => {
   return (
     <div>
-      <main className="p-2 flex flex-row max-w-[1024px]">
+      <div className="p-2 flex flex-row">
         <div className="drawer-side">
           <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
           <ul className="menu p-4 w-80 bg-base-100 text-base-content">
@@ -23,13 +23,13 @@ const Sidebar = ({ children }: SidebarProps) => {
             <li>
               <ActiveLink href="/customize">
                 <Emoji symbol="🛠️" />
-                Customization
+                Card Customization
               </ActiveLink>
             </li>
           </ul>
         </div>
         <div>{children}</div>
-      </main>
+      </div>
     </div>
   );
 };

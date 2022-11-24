@@ -34,7 +34,7 @@ export default function Home() {
       </Head>
 
       <Layout>
-        <div className="ml-96">
+        <div className="ml-96 max-w-[1024px]">
           <div className="flex flex-col gap-8">
             <div className="font-bold text-lg">Your public space</div>
             <ul className="menu menu-horizontal bg-base-100 border border-primary rounded-box p-2">
