@@ -1,13 +1,67 @@
 import Head from "next/head";
+import { useState } from "react";
 import Layout from "src/components/Layout";
 import { useEffect } from "react";
 import { themeChange } from "theme-change";
+import CustomizeCardBorder from "src/components/CustomizeCardBorder";
+import CustomizeCardImagePlacement from "src/components/CustomizeCardImagePlacement";
+import CustomizeCardImagePadding from "src/components/CustomizeCardImagePadding";
+
+enum BorderOption {
+  Blocky = "BLOCKY",
+  Rounded = "ROUNDED",
+}
+
+enum ImagePlacementOption {
+  Top = "TOP",
+  Side = "SIDE",
+}
+
+enum PaddingOption {
+  With = "WITH",
+  Without = "WITHOUT",
+}
 
 const Customize = () => {
   useEffect(() => {
     themeChange(false);
     // 👆 false parameter is required for react project
   }, []);
+
+  const [borderSelected, setBorderSelected] = useState<number | null>(null);
+  const borderOptions = [
+    { id: 1, border: BorderOption.Rounded },
+    { id: 2, border: BorderOption.Blocky },
+  ];
+
+  const [placementSelected, setPlacementSelected] = useState<number | null>(
+    null
+  );
+  const placementOptions = [
+    { id: 1, imagePlacement: ImagePlacementOption.Top },
+    { id: 2, imagePlacement: ImagePlacementOption.Side },
+  ];
+
+  const [paddingSelected, setPaddingSelected] = useState<number | null>(null);
+  const paddingOptions = [
+    { id: 1, padding: PaddingOption.Without },
+    { id: 2, padding: PaddingOption.With },
+  ];
+
+  const handleReset = () => {
+    setBorderSelected(null);
+    setPlacementSelected(null);
+    setPaddingSelected(null);
+  };
+
+  const checkIsSelectionValid = () => {
+    if (!borderSelected || !paddingSelected || !placementSelected) {
+      return false;
+    }
+    return true;
+  };
+
+  const handleConfirm = () => {};
 
   return (
     <div>
@@ -18,34 +72,54 @@ const Customize = () => {
       </Head>
 
       <Layout>
-        <div className="flex flex-col gap-8">
-          <div className="border-2 border-black">
-            <div className="card rounded-none card-side bg-base-100 shadow-xl">
-              <figure>
-                <img src="https://placeimg.com/200/280/arch" alt="Movie" />
-              </figure>
-              <div className="card-body">
-                <h2 className="card-title">New movie is released!</h2>
-                <p>Click the button to watch on Jetflix app.</p>
-                <div className="card-actions justify-end">
-                  <button className="btn btn-primary">Watch</button>
-                </div>
-              </div>
-            </div>
+        <div className="flex flex-row gap-4">
+          <div className="flex flex-col gap-8">
+            <div className="text-lg font-semibold">Border</div>
+            {borderOptions.map((borderOption) => (
+              <CustomizeCardBorder
+                key={borderOption.id}
+                border={borderOption.border}
+                selected={borderSelected === borderOption.id}
+                onChange={() => setBorderSelected(borderOption.id)}
+              />
+            ))}
           </div>
-          <div className="border-2 border-red-500">
-            <div className="card rounded-2xl card-side bg-base-100 shadow-xl">
-              <figure>
-                <img src="https://placeimg.com/200/280/arch" alt="Movie" />
-              </figure>
-              <div className="card-body">
-                <h2 className="card-title">New movie is released!</h2>
-                <p>Click the button to watch on Jetflix app.</p>
-                <div className="card-actions justify-end">
-                  <button className="btn btn-primary">Watch</button>
-                </div>
-              </div>
-            </div>
+          <div className="flex flex-col gap-8">
+            <div className="text-lg font-semibold">Image Position</div>
+            {placementOptions.map((placementOption) => (
+              <CustomizeCardImagePlacement
+                key={placementOption.id}
+                imagePlacement={placementOption.imagePlacement}
+                selected={placementSelected === placementOption.id}
+                onChange={() => setPlacementSelected(placementOption.id)}
+              />
+            ))}
+          </div>
+          <div className="flex flex-col gap-8">
+            <div className="text-lg font-semibold">Image Padding</div>
+            {paddingOptions.map((paddingOption) => (
+              <CustomizeCardImagePadding
+                key={paddingOption.id}
+                padding={paddingOption.padding}
+                selected={paddingSelected === paddingOption.id}
+                onChange={() => setPaddingSelected(paddingOption.id)}
+              />
+            ))}
+          </div>
+          <div className="flex flex-row gap-2 m-8">
+            <button
+              className="btn btn-outline btn-secondary"
+              onClick={handleReset}
+            >
+              Reset
+            </button>
+            <button
+              className="btn btn-primary"
+              disabled={!checkIsSelectionValid()}
+              onClick={handleConfirm}
+            >
+              Confirm
+            </button>
           </div>
         </div>
       </Layout>
