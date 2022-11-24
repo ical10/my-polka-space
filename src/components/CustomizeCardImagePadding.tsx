@@ -30,7 +30,7 @@ const CustomizeCardImagePadding = ({
       </figure>
       <button>
         <div className="card-body">
-          <h2 className="card-title">{padding} Image Card</h2>
+          <h2 className="card-title font-normal text-lg">{padding} padding</h2>
         </div>
       </button>
     </div>

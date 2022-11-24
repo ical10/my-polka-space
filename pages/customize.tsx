@@ -6,6 +6,8 @@ import { themeChange } from "theme-change";
 import CustomizeCardBorder from "src/components/CustomizeCardBorder";
 import CustomizeCardImagePlacement from "src/components/CustomizeCardImagePlacement";
 import CustomizeCardImagePadding from "src/components/CustomizeCardImagePadding";
+import Emoji from "src/components/Emoji";
+import { useCardStyleStore } from "src/store";
 
 enum BorderOption {
   Blocky = "BLOCKY",
@@ -28,6 +30,22 @@ const Customize = () => {
     // 👆 false parameter is required for react project
   }, []);
 
+  const {
+    borderStyle,
+    setBorderStyle,
+    placementStyle,
+    setPlacementStyle,
+    paddingStyle,
+    setPaddingStyle,
+  } = useCardStyleStore((state) => ({
+    borderStyle: state.borderStyle,
+    setBorderStyle: state.setBorderStyle,
+    placementStyle: state.placementStyle,
+    setPlacementStyle: state.setPlacementStyle,
+    paddingStyle: state.paddingStyle,
+    setPaddingStyle: state.setPaddingStyle,
+  }));
+
   const [borderSelected, setBorderSelected] = useState<number | null>(null);
   const borderOptions = [
     { id: 1, border: BorderOption.Rounded },
@@ -48,6 +66,8 @@ const Customize = () => {
     { id: 2, padding: PaddingOption.With },
   ];
 
+  const [editSuccess, setEditSuccess] = useState(false);
+
   const handleReset = () => {
     setBorderSelected(null);
     setPlacementSelected(null);
@@ -61,7 +81,22 @@ const Customize = () => {
     return true;
   };
 
-  const handleConfirm = () => {};
+  const handleConfirm = () => {
+    const newBorderStyle = borderSelected === 1 ? "rounded-xl" : "rounded-none";
+    const newPlacementStyle =
+      placementSelected === 1 ? "card" : "card card-side";
+    const newPaddingStyle = paddingSelected === 1 ? "" : "px-10 py-10";
+
+    setBorderStyle(newBorderStyle);
+    setPlacementStyle(newPlacementStyle);
+    setPaddingStyle(newPaddingStyle);
+
+    setEditSuccess(true);
+
+    setTimeout(() => {
+      setEditSuccess(false);
+    }, 2500);
+  };
 
   return (
     <div>
@@ -107,21 +142,41 @@ const Customize = () => {
             ))}
           </div>
           <div className="flex flex-row gap-2 m-8">
-            <button
-              className="btn btn-outline btn-secondary"
-              onClick={handleReset}
-            >
-              Reset
-            </button>
-            <button
-              className="btn btn-primary"
-              disabled={!checkIsSelectionValid()}
-              onClick={handleConfirm}
-            >
-              Confirm
-            </button>
+            <div className="flex flex-col justify-center gap-2">
+              <div className="flex gap-2 font-normal">
+                <Emoji symbol="ℹ️" />
+                Select your own card style and confirm
+              </div>
+              <button
+                className="btn btn-outline btn-secondary"
+                onClick={handleReset}
+              >
+                Reset
+              </button>
+              <button
+                className="btn btn-primary"
+                disabled={!checkIsSelectionValid()}
+                onClick={handleConfirm}
+              >
+                Confirm
+              </button>
+            </div>
           </div>
         </div>
+
+        {editSuccess ? (
+          <div className="toast toast-center w-96">
+            <div className="alert alert-success min-w-max justify-center">
+              <div>
+                <span className="font-medium text-bg-base-100">
+                  Edit success
+                </span>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <></>
+        )}
       </Layout>
     </div>
   );

@@ -25,7 +25,7 @@ const CustomizeCardBorder = ({
     <div className={rootClasses} onClick={onChange}>
       <button>
         <div className="card-body">
-          <h2 className="card-title">{border} Card</h2>
+          <h2 className="card-title font-normal text-lg">{border} Card</h2>
         </div>
       </button>
     </div>

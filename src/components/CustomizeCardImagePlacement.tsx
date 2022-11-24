@@ -28,7 +28,9 @@ const CustomizeCardImagePlacement = ({
       </figure>
       <button>
         <div className="card-body">
-          <h2 className="card-title">{imagePlacement} Image Card</h2>
+          <h2 className="card-title font-normal text-lg">
+            {imagePlacement} Image Card
+          </h2>
         </div>
       </button>
     </div>
